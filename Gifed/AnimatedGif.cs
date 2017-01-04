@@ -11,7 +11,7 @@ namespace Gifed
     /// <summary>
     /// Provides an interface of loading, manipulating, and created animated GIF images.
     /// </summary>
-    public sealed class AnimatedGif : IEnumerable<GifFrame>
+    public sealed class AnimatedGif : IEnumerable<GifFrame>, IDisposable
     {
         private readonly List<GifFrame> _frames;
 
@@ -278,6 +278,17 @@ namespace Gifed
             encoderParameters.Param[0] = new EncoderParameter( Encoder.SaveFlag, (long)EncoderValue.Flush );
             gif.SaveAdd( encoderParameters );
             stream.Flush();
+        }
+
+        /// <summary>
+        /// Releases all resources used by this object.
+        /// </summary>
+        public void Dispose()
+        {
+            foreach( var frame in this._frames )
+                frame.Dispose();
+
+            this._frames.Clear();
         }
     }
 }

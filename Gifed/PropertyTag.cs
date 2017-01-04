@@ -1,7 +1,7 @@
 ﻿namespace System.Drawing.Imaging
 {
     /// <summary>
-    /// Named properties for <see cref="ImageExtensions.GetPropertyItem" />.
+    ///     Named properties for <see cref="ImageExtensions.GetPropertyItem" />.
     /// </summary>
     public enum PropertyTag
     {

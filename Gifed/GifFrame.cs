@@ -6,7 +6,7 @@ namespace Gifed
     /// <summary>
     /// Represents one individual frame of an animated GIF.
     /// </summary>
-    public sealed class GifFrame
+    public sealed class GifFrame : IDisposable
     {
         private Image _image;
 
@@ -50,5 +50,11 @@ namespace Gifed
             this._image = image;
             this.Delay = delay;
         }
+
+        /// <summary>
+        /// Releases all resources used by this object.
+        /// </summary>
+        public void Dispose()
+            => this._image.Dispose();
     }
 }

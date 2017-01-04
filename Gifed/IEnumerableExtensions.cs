@@ -3,12 +3,12 @@
 namespace System.Linq
 {
     /// <summary>
-    /// Provies a set of extensions for <see cref="IEnumerable{T}" />.
+    ///     Provies a set of extensions for <see cref="IEnumerable{T}" />.
     /// </summary>
     public static class IEnumerableExtensions
     {
         /// <summary>
-        /// Splits an <see cref="IEnumerable{T}" /> into evenly sized chunks.
+        ///     Splits an <see cref="IEnumerable{T}" /> into evenly sized chunks.
         /// </summary>
         /// <param name="enumerable">The source enumerable.</param>
         /// <param name="chunkSize">The size of the chunks to return.</param>
@@ -21,8 +21,10 @@ namespace System.Linq
                 throw new ArgumentNullException( nameof( enumerable ) );
 
             if( chunkSize < 1 )
+            {
                 throw new ArgumentException( "Chunk size must be a positive integer greater than zero",
                     nameof( chunkSize ) );
+            }
 
             return chunkSize == 1
                 ? enumerable.Select( item => new[] { item } )

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle( "Gifed" )]
-[assembly: AssemblyDescription( "A simple library for creating and manipulating animated GIF images." )]
+[assembly: AssemblyTitle( "Watermark" )]
+[assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
-[assembly: AssemblyProduct( "Gifed" )]
-[assembly: AssemblyCopyright( "Copyright © Tony J. Hudgins 2017" )]
+[assembly: AssemblyProduct( "Watermark" )]
+[assembly: AssemblyCopyright( "Copyright ©  2017" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
-[assembly: Guid( "ce28483a-c6eb-4b94-84f6-6ef9d28d73aa" )]
+[assembly: Guid( "bb43557f-fa36-4ada-b82a-1c0778e39438" )]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion( "1.0.3" )]
-[assembly: AssemblyFileVersion( "1.0.3" )]
+[assembly: AssemblyVersion( "1.0.0.0" )]
+[assembly: AssemblyFileVersion( "1.0.0.0" )]
