@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using Gifed;
 
 namespace Watermark
@@ -17,7 +12,7 @@ namespace Watermark
 
             // Create the colour for our watermark, 75% opacity white
             var colour = Color.FromArgb( (int)( byte.MaxValue * 0.75 ), Color.White );
-            
+
             // The brush the text will be drawn with
             var brush = new SolidBrush( colour );
 
@@ -38,7 +33,7 @@ namespace Watermark
                         var textLocation = new PointF
                         {
                             X = frame.Image.Width - textSize.Width - 10,
-                            Y = frame.Image.Height - textSize.Height,
+                            Y = frame.Image.Height - textSize.Height
                         };
 
                         // Draw the string

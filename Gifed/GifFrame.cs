@@ -4,14 +4,14 @@ using System.Drawing;
 namespace Gifed
 {
     /// <summary>
-    /// Represents one individual frame of an animated GIF.
+    ///     Represents one individual frame of an animated GIF.
     /// </summary>
     public sealed class GifFrame : IDisposable
     {
         private Image _image;
 
         /// <summary>
-        /// The image content of the frame.
+        ///     The image content of the frame.
         /// </summary>
         public Image Image
         {
@@ -32,12 +32,12 @@ namespace Gifed
         }
 
         /// <summary>
-        /// The delay of each frame, in hundredths (1/100) of a second.
+        ///     The delay of each frame, in hundredths (1/100) of a second.
         /// </summary>
         public uint Delay { get; set; }
 
         /// <summary>
-        /// Creates a new GIF frame from the specified image with the specified delay.
+        ///     Creates a new GIF frame from the specified image with the specified delay.
         /// </summary>
         /// <param name="image">The image content of the frame.</param>
         /// <param name="delay">The delay (in hundredths of a second) of the frame.</param>
@@ -52,7 +52,7 @@ namespace Gifed
         }
 
         /// <summary>
-        /// Releases all resources used by this object.
+        ///     Releases all resources used by this object.
         /// </summary>
         public void Dispose()
             => this._image.Dispose();

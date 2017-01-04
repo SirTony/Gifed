@@ -9,19 +9,22 @@ using System.Linq;
 namespace Gifed
 {
     /// <summary>
-    /// Provides an interface of loading, manipulating, and created animated GIF images.
+    ///     Provides an interface of loading, manipulating, and created animated GIF images.
     /// </summary>
     public sealed class AnimatedGif : IEnumerable<GifFrame>, IDisposable
     {
         private readonly List<GifFrame> _frames;
 
         /// <summary>
-        /// Get a single frame at the specified index.
+        ///     Get a single frame at the specified index.
         /// </summary>
         /// <param name="index">The index of the desired frame.</param>
         /// <returns>The requested <see cref="GifFrame" /> on success.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null"/>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="index" /> is less than 0, or <paramref name="index" /> is equal to or greater than <see cref="AnimatedGif.FrameCount" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     Thrown when <paramref name="index" /> is less than 0, or
+        ///     <paramref name="index" /> is equal to or greater than <see cref="AnimatedGif.FrameCount" />.
+        /// </exception>
         public GifFrame this[ int index ]
         {
             get { return this._frames[index]; }
@@ -35,22 +38,22 @@ namespace Gifed
         }
 
         /// <summary>
-        /// How many times the animation should loop before it stops (0 for indefinite).
+        ///     How many times the animation should loop before it stops (0 for indefinite).
         /// </summary>
         public ushort LoopCount { get; set; }
 
         /// <summary>
-        /// How many frames the animation contains.
+        ///     How many frames the animation contains.
         /// </summary>
         public int FrameCount => this._frames.Count;
 
         /// <summary>
-        /// The total duration of the animation.
+        ///     The total duration of the animation.
         /// </summary>
         public TimeSpan Duration => TimeSpan.FromSeconds( this._frames.Sum( f => f.Delay ) * 100 );
 
         /// <summary>
-        /// Creates a new, unpopulated animation with the specified loop count.
+        ///     Creates a new, unpopulated animation with the specified loop count.
         /// </summary>
         /// <param name="loopCount">How many times the animation should loop before it stops (0 for indefinite).</param>
         public AnimatedGif( ushort loopCount = 0 )
@@ -58,13 +61,24 @@ namespace Gifed
             this._frames = new List<GifFrame>();
             this.LoopCount = loopCount;
         }
-        
+
         private AnimatedGif( List<GifFrame> frames, ushort loopCount )
         {
             this._frames = frames;
             this.LoopCount = loopCount;
         }
-        
+
+        /// <summary>
+        ///     Releases all resources used by this object.
+        /// </summary>
+        public void Dispose()
+        {
+            foreach( var frame in this._frames )
+                frame.Dispose();
+
+            this._frames.Clear();
+        }
+
         public IEnumerator<GifFrame> GetEnumerator()
             => this._frames.GetEnumerator();
 
@@ -72,7 +86,7 @@ namespace Gifed
             => ( (IEnumerable)this._frames ).GetEnumerator();
 
         /// <summary>
-        /// Loads an existing GIF image from the specified file.
+        ///     Loads an existing GIF image from the specified file.
         /// </summary>
         /// <param name="path">A full or relative path an image on disk.</param>
         /// <returns>A new instance of <see cref="AnimatedGif" /> representing the file.</returns>
@@ -84,7 +98,7 @@ namespace Gifed
         }
 
         /// <summary>
-        /// Loads an existing GIF image from the specified stream.
+        ///     Loads an existing GIF image from the specified stream.
         /// </summary>
         /// <param name="stream">A readable stream containing image data.</param>
         /// <returns>A new instance of <see cref="AnimatedGif" /> representing the stream.</returns>
@@ -139,11 +153,11 @@ namespace Gifed
         }
 
         /// <summary>
-        /// Adds a single frame to the animation with the specified delay.
+        ///     Adds a single frame to the animation with the specified delay.
         /// </summary>
         /// <param name="image">The image data of the frame.</param>
         /// <param name="delay">The delay (in hundredths of a second) of the frame.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="image" /> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="image" /> is <see langword="null" />.</exception>
         public void AddFrame( Image image, uint delay )
         {
             var frame = new GifFrame( image, delay );
@@ -151,10 +165,10 @@ namespace Gifed
         }
 
         /// <summary>
-        /// Adds a single frame to the animation.
+        ///     Adds a single frame to the animation.
         /// </summary>
         /// <param name="frame">The <see cref="GifFrame" /> to add.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="frame" /> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="frame" /> is <see langword="null" />.</exception>
         public void AddFrame( GifFrame frame )
         {
             if( frame == null )
@@ -164,20 +178,26 @@ namespace Gifed
         }
 
         /// <summary>
-        /// Adds multiple frames to the animation.
+        ///     Adds multiple frames to the animation.
         /// </summary>
         /// <param name="frames">An array of <see cref="GifFrame" /> to add.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="frames" /> is <see langword="null"/>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown when any individual <see cref="GifFrame"/> in <paramref name="frames" /> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="frames" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when any individual <see cref="GifFrame" /> in
+        ///     <paramref name="frames" /> is <see langword="null" />.
+        /// </exception>
         public void AddFrames( params GifFrame[] frames )
             => this.AddFrames( (IEnumerable<GifFrame>)frames );
 
         /// <summary>
-        /// Adds multiple frames to the animation.
+        ///     Adds multiple frames to the animation.
         /// </summary>
         /// <param name="frames"></param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="frames" /> is <see langword="null"/>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown when any individual <see cref="GifFrame"/> in <paramref name="frames" /> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="frames" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown when any individual <see cref="GifFrame" /> in
+        ///     <paramref name="frames" /> is <see langword="null" />.
+        /// </exception>
         public void AddFrames( IEnumerable<GifFrame> frames )
         {
             if( frames == null )
@@ -193,14 +213,14 @@ namespace Gifed
         }
 
         /// <summary>
-        /// Removes a single frame from the animation.
+        ///     Removes a single frame from the animation.
         /// </summary>
         /// <param name="index">The zero-based index of the frame to remove.</param>
         public void RemoveFrame( int index )
             => this._frames.RemoveAt( index );
 
         /// <summary>
-        /// Removes a single frame from the animation.
+        ///     Removes a single frame from the animation.
         /// </summary>
         /// <param name="frame">The desired <see cref="GifFrame" /> to remove.</param>
         /// <returns><see langword="true" /> if the frame was removed, <see langword="false" /> otherwise.</returns>
@@ -208,7 +228,7 @@ namespace Gifed
             => this._frames.Remove( frame );
 
         /// <summary>
-        /// Removes a range of frames from the animation.
+        ///     Removes a range of frames from the animation.
         /// </summary>
         /// <param name="index">The zero-based index of the position to start removing at.</param>
         /// <param name="count">The number of frames to remove after <paramref name="index" />.</param>
@@ -216,7 +236,7 @@ namespace Gifed
             => this._frames.RemoveRange( index, count );
 
         /// <summary>
-        /// Removes all frames from the animation that match a predicate.
+        ///     Removes all frames from the animation that match a predicate.
         /// </summary>
         /// <param name="pred">The predicate used to test frames for removal.</param>
         /// <returns>The number of frames that were removed from the animation.</returns>
@@ -224,13 +244,13 @@ namespace Gifed
             => this._frames.RemoveAll( pred );
 
         /// <summary>
-        /// Removes all frames from the animation.
+        ///     Removes all frames from the animation.
         /// </summary>
         public void RemoveAllFrames()
             => this._frames.Clear();
 
         /// <summary>
-        /// Saves the animation to the specified file on disk.
+        ///     Saves the animation to the specified file on disk.
         /// </summary>
         /// <param name="path">An absolute or relative path to save the animation to.</param>
         public void Save( string path )
@@ -240,7 +260,7 @@ namespace Gifed
         }
 
         /// <summary>
-        /// Saves the image data for the animation to the specified stream.
+        ///     Saves the image data for the animation to the specified stream.
         /// </summary>
         /// <param name="stream">A writeable <see cref="Stream" /> to save the image data to.</param>
         /// <exception cref="InvalidOperationException">Thrown when the animation does not contain any frames.</exception>
@@ -278,17 +298,6 @@ namespace Gifed
             encoderParameters.Param[0] = new EncoderParameter( Encoder.SaveFlag, (long)EncoderValue.Flush );
             gif.SaveAdd( encoderParameters );
             stream.Flush();
-        }
-
-        /// <summary>
-        /// Releases all resources used by this object.
-        /// </summary>
-        public void Dispose()
-        {
-            foreach( var frame in this._frames )
-                frame.Dispose();
-
-            this._frames.Clear();
         }
     }
 }
