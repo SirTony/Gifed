@@ -110,14 +110,13 @@ namespace Gifed
             var delayValues =
                 delayProperty.Value.InChunksOf( sizeof( uint ) )
                              .Select( b => b.ToArray() )
-                             .Select( b => BitConverter.ToUInt32( b, 0 ) )
-                             .ToArray();
+                             .Select( b => BitConverter.ToUInt32( b, 0 ) );
 
             var clone = (Image)image.Clone();
-            Func<int, Bitmap> cloneImage = i =>
+            Func<int, Bitmap> cloneImage = img =>
             {
-                if( i > 0 )
-                    clone.SelectActiveFrame( FrameDimension.Time, i );
+                if( img > 0 )
+                    clone.SelectActiveFrame( FrameDimension.Time, img );
 
                 var frameImage = new Bitmap( image.Width, image.Height, image.PixelFormat );
                 using( var graphics = Graphics.FromImage( frameImage ) )
@@ -135,6 +134,7 @@ namespace Gifed
                                    .Zip( delayValues, ( img, delay ) => new GifFrame( img, delay ) )
                                    .ToList();
 
+            clone.Dispose();
             return new AnimatedGif( frames, loopCount );
         }
 
