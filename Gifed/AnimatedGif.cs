@@ -27,14 +27,8 @@ namespace Gifed
         /// </exception>
         public GifFrame this[ int index ]
         {
-            get { return this._frames[index]; }
-            set
-            {
-                if( value == null )
-                    throw new ArgumentNullException( nameof( value ) );
-
-                this._frames[index] = value;
-            }
+            get => this._frames[index];
+            set => this._frames[index] = value ?? throw new ArgumentNullException( nameof( value ) );
         }
 
         /// <summary>
@@ -50,7 +44,7 @@ namespace Gifed
         /// <summary>
         ///     The total duration of the animation.
         /// </summary>
-        public TimeSpan Duration => TimeSpan.FromSeconds( this._frames.Sum( f => f.Delay ) * 100 );
+        public TimeSpan Duration => TimeSpan.FromSeconds( this._frames.Sum( f => f.Delay.TotalSeconds ) );
 
         /// <summary>
         ///     Creates a new, unpopulated animation with the specified loop count.
@@ -79,7 +73,7 @@ namespace Gifed
             this._frames.Clear();
         }
 
-        public IEnumerator<GifFrame> GetEnumerator()
+        IEnumerator<GifFrame> IEnumerable<GifFrame>.GetEnumerator()
             => this._frames.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -115,19 +109,20 @@ namespace Gifed
         {
             var frameCount = image.GetFrameCount( FrameDimension.Time );
 
-            PropertyItem delayProperty, loopProperty;
-            if( !image.TryGetPropertyItem( PropertyTag.FrameDelay, out delayProperty ) ||
-                !image.TryGetPropertyItem( PropertyTag.LoopCount, out loopProperty ) )
-                throw new InvalidOperationException( "Image is not an animated gif" );
+            if (!image.TryGetPropertyItem(PropertyTag.FrameDelay, out var delayProperty) ||
+                !image.TryGetPropertyItem(PropertyTag.LoopCount, out var loopProperty))
+                throw new InvalidOperationException("Image is not an animated gif");
 
             var loopCount = BitConverter.ToUInt16( loopProperty.Value, 0 );
             var delayValues =
                 delayProperty.Value.InChunksOf( sizeof( uint ) )
                              .Select( b => b.ToArray() )
-                             .Select( b => BitConverter.ToUInt32( b, 0 ) );
+                             .Select( b => BitConverter.ToUInt32( b, 0 ) )
+                             .Select( d => TimeSpan.FromMilliseconds( d * 10d ) );
 
             var clone = (Image)image.Clone();
-            Func<int, Bitmap> cloneImage = img =>
+
+            Bitmap CloneImage( int img )
             {
                 if( img > 0 )
                     clone.SelectActiveFrame( FrameDimension.Time, img );
@@ -141,10 +136,10 @@ namespace Gifed
                 }
 
                 return frameImage;
-            };
+            }
 
             var frames = Enumerable.Range( 0, frameCount )
-                                   .Select( cloneImage )
+                                   .Select( CloneImage )
                                    .Zip( delayValues, ( img, delay ) => new GifFrame( img, delay ) )
                                    .ToList();
 
@@ -156,9 +151,9 @@ namespace Gifed
         ///     Adds a single frame to the animation with the specified delay.
         /// </summary>
         /// <param name="image">The image data of the frame.</param>
-        /// <param name="delay">The delay (in hundredths of a second) of the frame.</param>
+        /// <param name="delay">The delay of the frame.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="image" /> is <see langword="null" />.</exception>
-        public void AddFrame( Image image, uint delay )
+        public void AddFrame( Image image, TimeSpan delay )
         {
             var frame = new GifFrame( image, delay );
             this.AddFrame( frame );
@@ -274,7 +269,10 @@ namespace Gifed
 
             delayProperty.Id = (int)PropertyTag.FrameDelay;
             delayProperty.Type = (int)PropertyItemType.UInt32Array;
-            delayProperty.Value = this._frames.Select( f => f.Delay ).SelectMany( BitConverter.GetBytes ).ToArray();
+            delayProperty.Value = this._frames
+                                      .Select( f => (uint)( f.Delay.TotalMilliseconds / 10d ) )
+                                      .SelectMany( BitConverter.GetBytes )
+                                      .ToArray();
             delayProperty.Len = sizeof( uint ) * this.FrameCount;
 
             loopProperty.Id = (int)PropertyTag.LoopCount;
@@ -283,8 +281,10 @@ namespace Gifed
             loopProperty.Len = sizeof( uint );
 
             var encoder = ImageCodecInfo.GetImageEncoders().First( e => e.FormatID == ImageFormat.Gif.Guid );
-            var encoderParameters = new EncoderParameters();
-            encoderParameters.Param[0] = new EncoderParameter( Encoder.SaveFlag, (long)EncoderValue.MultiFrame );
+            var encoderParameters = new EncoderParameters
+            {
+                Param = { [0] = new EncoderParameter( Encoder.SaveFlag, (long)EncoderValue.MultiFrame ) }
+            };
 
             var gif = (Image)this._frames[0].Image.Clone();
             gif.SetPropertyItem( delayProperty );

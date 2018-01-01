@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using Gifed;
 
 namespace Watermark
@@ -11,7 +12,7 @@ namespace Watermark
             const string WatermarkText = "Watermark Test";
 
             // Create the colour for our watermark, 75% opacity white
-            var colour = Color.FromArgb( (int)( byte.MaxValue * 0.75 ), Color.White );
+            var colour = Color.FromArgb( (int)( Byte.MaxValue * 0.75 ), Color.White );
 
             // The brush the text will be drawn with
             var brush = new SolidBrush( colour );
@@ -29,7 +30,7 @@ namespace Watermark
                         // Measure the string for positioning
                         var textSize = graphics.MeasureString( WatermarkText, font );
 
-                        // Position the text in the lower-right corner, with a 10 pixel margin on the horizonatl axis
+                        // Position the text in the lower-right corner, with a 10 pixel margin on the horizontal axis
                         var textLocation = new PointF
                         {
                             X = frame.Image.Width - textSize.Width - 10,

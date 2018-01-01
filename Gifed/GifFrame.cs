@@ -32,17 +32,17 @@ namespace Gifed
         }
 
         /// <summary>
-        ///     The delay of each frame, in hundredths (1/100) of a second.
+        ///     The delay of each frame.
         /// </summary>
-        public uint Delay { get; set; }
+        public TimeSpan Delay { get; set; }
 
         /// <summary>
         ///     Creates a new GIF frame from the specified image with the specified delay.
         /// </summary>
         /// <param name="image">The image content of the frame.</param>
-        /// <param name="delay">The delay (in hundredths of a second) of the frame.</param>
+        /// <param name="delay">The delay of the frame.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="image" /> is <see langword="null" />.</exception>
-        public GifFrame( Image image, uint delay )
+        public GifFrame( Image image, TimeSpan delay )
         {
             if( image == null )
                 throw new ArgumentNullException( nameof( image ) );

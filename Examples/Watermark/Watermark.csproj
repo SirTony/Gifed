@@ -42,9 +42,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Gifed\Gifed.csproj">
       <Project>{ce28483a-c6eb-4b94-84f6-6ef9d28d73aa}</Project>
       <Name>Gifed</Name>
